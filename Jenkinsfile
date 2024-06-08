@@ -28,6 +28,7 @@ pipeline {
                 sh 'docker images pull postgres'
                 sh 'docker network create dev || echo "this network exist" '
                 sh 'docker container stop postgres_container || echo "this container does not exist" '
+                sh 'docker rm postgres_container || echo "this container remove" '
                 sh 'docker volume rm postgres_data || echo "no volume" '
 
                 sh 'docker volume create postgres_data'
@@ -41,6 +42,7 @@ pipeline {
                 echo "Deploying and cleaning"
                 sh 'docker images pull doducmanh/springboot'
                 sh 'docker container stop doducmanh-springboot || echo "this container does not exits"'
+                sh 'docker rm doducmanh-springboot || echo "this remove container" '
                 sh 'docker network create dev || echo "this network exist" '
                 sh 'docker container run -d --rm --name doducmanh-springboot -p 8081:8080 --network dev doducmanh/springboot'
             }
