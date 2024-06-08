@@ -1,0 +1,38 @@
+services:
+  postgres-db:
+    container_name: postgres-db
+    image: postgres
+    restart: always
+    ports:
+      - 5431:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=my_db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  spring-app:
+    container_name: spring-app
+    image: doducmanh/user-repo:v1.0.0
+    ports:
+      - 8082:8089
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+networks:
+  backend:
+    name: springboot-network

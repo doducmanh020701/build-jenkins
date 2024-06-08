@@ -3,6 +3,7 @@ package com.vn.demo.devops.build_devpops.service;
 import com.vn.demo.devops.build_devpops.api.UserApi;
 import com.vn.demo.devops.build_devpops.dto.UserRequest;
 import com.vn.demo.devops.build_devpops.dto.UserResponse;
+import com.vn.demo.devops.build_devpops.entity.UserEntity;
 import com.vn.demo.devops.build_devpops.mapper.UserMapper;
 import com.vn.demo.devops.build_devpops.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,21 @@ public class UserService implements UserApi {
     @Override
     public List<UserResponse> getUsers() {
         return userRepository.findAll().stream().map(userMapper::mapToUserResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserResponse getUser(Long userId) {
+        return userRepository.findById(userId).map(userMapper::mapToUserResponse)
+                .orElse(null);
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+
+    }
+
+    @Override
+    public void updateUser(UserEntity user, Long userId) {
+
     }
 }
