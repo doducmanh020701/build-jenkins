@@ -1,5 +1,7 @@
 FROM maven:3.8.4-openjdk-17-slim AS build
-COPY mvnw pom.xml ./
+COPY mvnw .
+RUN chmod +x ./mvnw
+COPY pom.xml ./
 COPY .mvn .mvn
 COPY src src
 RUN mvn clean install -DskipTests
