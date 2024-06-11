@@ -17,10 +17,9 @@ pipeline{
         }
         stage('Push Docker'){
             steps{
-                withCredentials([string(credentialsId: 'dockertext', variable: 'dockerhub')]) {
-                    sh 'docker login -u doducmanh020701@gmail.com -p ${dockerhub}'
+                withDockerRegistry(credentialsId: 'docker_pass', url: 'https://index.docker.io/v1/') {
+                   sh 'docker push doducmanh/build-users:v1.0.0'
                 }
-                sh 'docker push doducmanh/build-users:v1.0.0'
             }
         }
         stage('Pull and run images Docker'){
