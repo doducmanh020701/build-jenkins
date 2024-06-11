@@ -1,10 +1,15 @@
-FROM openjdk:oraclelinux8
-LABEL authors="doducmanh"
-WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN chmod +x ./mvnw
-RUN ./mvnw dependency:go-offline
-COPY src ./src
-CMD ["./mvnw", "spring-boot:run"]
+FROM maven:3.8.4-openjdk-17-slim AS build
+COPY pom.xml ./
+COPY .mvn .mvn
+COPY src src
+RUN mvn clean install -DskipTests
 
+
+# Stage 2: Run stage
+FROM openjdk:17-jdk-slim
+# Set working directory
+WORKDIR project-service
+# Copy the JAR file from the build stage
+COPY --from=build target/*.jar /app/project-service.jar
+# Set the entrypoint command for running the application
+ENTRYPOINT ["java", "-jar", "/app/project-service.jar"]
