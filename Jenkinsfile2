@@ -1,0 +1,32 @@
+pipeline{
+    agent any
+    tools{
+        maven 'my_maven'
+    }
+    stages{
+        stage('Build Maven'){
+            steps{
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/doducmanh020701/build-jenkins']])
+                bat 'mvn clean install -DskipTests'
+            }
+        }
+        stage('Build Docker'){
+            steps{
+                bat 'docker build -t doducmanh/build-users:v1.0.0 .'
+            }
+        }
+        stage('Push Docker'){
+            steps{
+                withCredentials([string(credentialsId: 'dockertext', variable: 'dockerhub')]) {
+                    bat 'docker login -u doducmanh020701@gmail.com -p ${dockerhub}'
+                }
+                bat 'docker push doducmanh/build-users:v1.0.0'
+            }
+        }
+        stage('Pull and run images Docker'){
+            steps{
+                bat 'docker-compose -f docker-compose.dev.yml up --build'
+            }
+        }
+    }
+}
